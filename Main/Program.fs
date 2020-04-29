@@ -1,4 +1,4 @@
-﻿open JsonFS.JsonValue
+﻿open JsonFS
 
 [<EntryPoint>]
 let main argv =

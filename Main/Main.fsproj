@@ -6,8 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="JsonValue.fs"/>
     <Compile Include="Program.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JsonFS\JsonFS.fsproj" />
   </ItemGroup>
 
 </Project>
