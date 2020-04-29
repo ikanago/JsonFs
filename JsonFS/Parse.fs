@@ -5,4 +5,4 @@ module Parse =
         if stream.Length = 0 then
             None
         else
-            Some(stream.[0])
+            Some(string stream.[0])
