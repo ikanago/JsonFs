@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Compile Include="JsonValue.fs" />
+    <Compile Include="Parse.fs" />
   </ItemGroup>
 
 </Project>

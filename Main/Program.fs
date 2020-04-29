@@ -2,5 +2,5 @@
 
 [<EntryPoint>]
 let main argv =
-    printfn "%A" JsonValue.object
+    printfn "%A" (Parse.anyChar "hoge")
     0 // return an integer exit code
