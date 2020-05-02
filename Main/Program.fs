@@ -1,4 +1,5 @@
 ﻿open JsonFS.Parse
+open JsonFS.Combinator
 
 [<EntryPoint>]
 let main argv =

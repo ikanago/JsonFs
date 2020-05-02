@@ -2,11 +2,12 @@ module JSonFS.Tests
 
 open NUnit.Framework
 open JsonFS.Parse
+open JsonFS.Combinator
 
 exception UnExpectedConditionException of string
 
 // Get value in the `ParseResult`
-let getResult (result: JsonFS.Parse.ParseResult) =
+let getResult (result: ParseResult) =
     match result with
     | Success (c, _) -> string c
     | Failure failure -> failure
