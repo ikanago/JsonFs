@@ -1,7 +1,5 @@
-// namespace JsonFS
 namespace JsonFS
 
-open System
 open JsonFS.Parse
 
 module Combinator =
@@ -11,11 +9,15 @@ module Combinator =
             | Ok c ->
                 if f c then
                     stream.Skip() |> ignore
-                    Success(c, stream)
+                    Success c
                 else
                     Failure "Unexpected Token"
             | Error e -> Failure "EOF"
 
-    let anyChar (stream: Stream) = satisfy (fun _ -> true) stream
+    // Read an any kind of character.
+    let anyChar = fun stream -> satisfy (fun _ -> true) stream
 
-    let digit (stream: Stream) = satisfy Char.IsDigit stream
+    // Expect a specific character and read it.
+    let specificChar c = fun stream -> satisfy ((=) c) stream
+
+    let digit = fun stream -> satisfy System.Char.IsDigit stream

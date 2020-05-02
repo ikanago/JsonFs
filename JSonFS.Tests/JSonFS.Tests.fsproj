@@ -14,7 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="Parse.test.fs" />
+    <Compile Include="Test.Parse.fs" />
+    <Compile Include="Test.Combinator.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

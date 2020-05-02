@@ -16,6 +16,6 @@ module Parse =
                 Ok()
             | Error e -> Error e
 
-    type ParseResult =
-        | Success of char * Stream
+    type ParseResult<'T> =
+        | Success of 'T
         | Failure of string
