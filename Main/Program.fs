@@ -3,6 +3,7 @@ open JsonFS.Combinator
 
 [<EntryPoint>]
 let main argv =
-    let stream = Stream("a12")
-    printfn "%A" (digit stream)
+    let stream = Stream("b12")
+    let p = digit <|> specificChar 'a'
+    printfn "%A" (p stream)
     0
