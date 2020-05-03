@@ -11,7 +11,9 @@ exception UnexpectedSuccessException of string
 // If `Success _` is passed, raise an exception.
 let getExpectedException (result: ParseResult<'T>) =
     match result with
-    | Success _ -> raise (UnexpectedSuccessException("Unreachable"))
+    | Success result ->
+        printfn "%A" result
+        raise (UnexpectedSuccessException("Unreachable"))
     | Failure failure -> failure
 
 [<Test>]
@@ -46,4 +48,11 @@ let orElseTest () =
     Assert.AreEqual(Success 'a', stream |> p)
     Assert.AreEqual(Success 'b', stream |> p)
     Assert.AreEqual(Success '1', stream |> p)
+    Assert.AreEqual("Unexpected Token", stream |> p |> getExpectedException)
+
+[<Test>]
+let fmapTest () =
+    let stream = Stream "a1"
+    let p = specificChar 'a' |>> System.Char.ToUpper
+    Assert.AreEqual(Success 'A', stream |> p)
     Assert.AreEqual("Unexpected Token", stream |> p |> getExpectedException)

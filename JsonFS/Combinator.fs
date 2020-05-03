@@ -39,7 +39,7 @@ module Combinator =
                 let qResult = q stream
                 match qResult with
                 | Failure failure -> Failure failure
-                |Success qValue -> Success (pValue, qValue)
+                | Success qValue -> Success(pValue, qValue)
 
     // First, apply the parser `p`.
     // If `p` succeeds, return the result of `p`.
@@ -50,3 +50,10 @@ module Combinator =
             match pResult with
             | Success _ -> pResult
             | Failure _ -> q stream
+
+    let (|>>) (p: Parser<'a>) f =
+        fun (stream: Stream) ->
+            let result = p stream
+            match result with
+            | Failure failure -> Failure failure
+            | Success value -> Success (f value)
