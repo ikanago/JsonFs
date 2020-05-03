@@ -33,6 +33,13 @@ let digitTest () =
     Assert.AreEqual("Unexpected Token", stream |> digit |> getExpectedException)
 
 [<Test>]
+let andThenTest () =
+    let stream = Stream "ab1c"
+    let p = specificChar 'a' .>>. specificChar 'b' .>>. digit
+    Assert.AreEqual(Success(('a', 'b'), '1'), stream |> p)
+    Assert.AreEqual("Unexpected Token", stream |> p |> getExpectedException)
+
+[<Test>]
 let orElseTest () =
     let stream = Stream "ab1c"
     let p = digit <|> specificChar 'a' <|> specificChar 'b'

@@ -27,6 +27,20 @@ module Combinator =
     let digit =
         fun (stream: Stream) -> satisfy System.Char.IsDigit stream
 
+    // Apply both parser `p` and `q`.
+    // If both of them succeed, return results wrapped into tuple.
+    // If one of them fails, report the failure.
+    let (.>>.) (p: Parser<'a>) (q: Parser<'b>) =
+        fun (stream: Stream) ->
+            let pResult = p stream
+            match pResult with
+            | Failure failure -> Failure failure
+            | Success pValue ->
+                let qResult = q stream
+                match qResult with
+                | Failure failure -> Failure failure
+                |Success qValue -> Success (pValue, qValue)
+
     // First, apply the parser `p`.
     // If `p` succeeds, return the result of `p`.
     // If `p` fails, apply the parser `q` and return the result of `q`.
