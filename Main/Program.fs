@@ -3,7 +3,7 @@ open JsonFS.Combinator
 
 [<EntryPoint>]
 let main argv =
-    let stream = Stream("123")
-    let p = sequence [digit; digit; digit]
+    let stream = Stream("aaa123a")
+    let p = many1 (specificChar 'a')
     printfn "%A" (p stream)
     0

@@ -70,3 +70,21 @@ module Combinator =
         match pList with
         | [] -> returnP []
         | headP::tailP -> consP headP (sequence tailP)
+
+    // Parse greedy as long as possible.
+    let many (p: Parser<'a>) =
+        let rec innerMany (stream: Stream) =
+            let firstResult = p stream
+            match firstResult with
+            | Failure _ -> []
+            | Success value -> value::(innerMany stream)
+        innerMany >> Success
+
+    // Almost same as `many`, but at least 1 character must be parsed successfully.
+    let many1 (p: Parser<'a>) =
+        fun (stream: Stream) ->
+            let attempt = (many p) stream
+            if attempt = Success [] then
+                Failure "Unexpected Token"
+            else
+                attempt

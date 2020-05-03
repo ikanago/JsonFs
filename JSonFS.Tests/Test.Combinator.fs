@@ -64,3 +64,14 @@ let sequenceTest () =
     let p2 = sequence [digit; specificChar 'a']
     Assert.AreEqual(Success['1'; '2'; 'a';], stream |> p1)
     Assert.AreEqual("Unexpected Token", stream |> p2 |> getExpectedException)
+
+[<Test>]
+let manyTest() =
+    let stream = Stream "aaab"
+    let manyA = many (specificChar 'a')
+    Assert.AreEqual(Success ['a'; 'a'; 'a'], stream |> manyA)
+    let stream = Stream "aaab"
+    let many1A = many1 (specificChar 'a')
+    Assert.AreEqual(Success ['a'; 'a'; 'a'], stream |> many1A)
+    let stream = Stream "bbbb"
+    Assert.AreEqual("Unexpected Token", stream |> many1A |> getExpectedException)
