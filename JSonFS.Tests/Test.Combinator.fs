@@ -56,3 +56,11 @@ let fmapTest () =
     let p = specificChar 'a' |>> System.Char.ToUpper
     Assert.AreEqual(Success 'A', stream |> p)
     Assert.AreEqual("Unexpected Token", stream |> p |> getExpectedException)
+
+[<Test>]
+let sequenceTest () =
+    let stream = Stream "12a3b"
+    let p1 = sequence [digit; digit; specificChar 'a']
+    let p2 = sequence [digit; specificChar 'a']
+    Assert.AreEqual(Success['1'; '2'; 'a';], stream |> p1)
+    Assert.AreEqual("Unexpected Token", stream |> p2 |> getExpectedException)

@@ -3,7 +3,7 @@ open JsonFS.Combinator
 
 [<EntryPoint>]
 let main argv =
-    let stream = Stream("a123")
-    let p = anyChar |>> System.Char.ToUpper
+    let stream = Stream("123")
+    let p = sequence [digit; digit; digit]
     printfn "%A" (p stream)
     0

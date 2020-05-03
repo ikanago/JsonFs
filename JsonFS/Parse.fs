@@ -19,3 +19,8 @@ module Parse =
     type ParseResult<'T> =
         | Success of 'T
         | Failure of string
+
+
+    type Parser<'a> = Stream -> ParseResult<'a>
+
+    let returnP x : Parser<'a> = fun _ -> Success x

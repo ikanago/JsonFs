@@ -2,8 +2,6 @@ namespace JsonFS
 
 open JsonFS.Parse
 
-type Parser<'a> = Stream -> ParseResult<'a>
-
 module Combinator =
     let satisfy f =
         fun (stream: Stream) ->
@@ -51,9 +49,24 @@ module Combinator =
             | Success _ -> pResult
             | Failure _ -> q stream
 
+    // First, apply the parser `p`.
+    // If `p` succeeds, then apply f to the result of `p` and 
+    // return it as `ParseResult<'a>`.
     let (|>>) (p: Parser<'a>) f =
         fun (stream: Stream) ->
             let result = p stream
             match result with
             | Failure failure -> Failure failure
-            | Success value -> Success (f value)
+            | Success value -> Success(f value)
+
+    let (<*>) (fP: Parser<'a -> 'b>) (xP: Parser<'a>) : Parser<'b> = (fP .>>. xP) |>> (fun (f, x) -> f x)
+
+    let lift2 f xP yP = (returnP f <*> xP <*> yP)
+
+    // Apply parsers in `pList`.
+    let rec sequence (pList: Parser<'a>list) =
+        let cons (head: 'a) (tail: 'a list) = head::tail
+        let consP = lift2 cons
+        match pList with
+        | [] -> returnP []
+        | headP::tailP -> consP headP (sequence tailP)
