@@ -62,6 +62,15 @@ let fmapTest () =
     Assert.AreEqual("Unexpected Token", stream |> p |> getExpectedException)
 
 [<Test>]
+let andThenSelect () =
+    let digitSemicolon = many1 digit .>> specificChar ';'
+    let signDigit = opt (specificChar '+' <|> specificChar '-') >>. many1 digit
+    Assert.AreEqual(Success ['1'; '2'; '3'], "123;" |> Stream |> digitSemicolon)
+    Assert.AreEqual(Success ['1'; '2'; '3'], "123;" |> Stream |> signDigit)
+    Assert.AreEqual(Success ['1'; '2'; '3'], "+123" |> Stream |> signDigit)
+    Assert.AreEqual(Success ['1'; '2'; '3'], "-123" |> Stream |> signDigit)
+
+[<Test>]
 let sequenceTest () =
     let stream = Stream "12a3b"
 

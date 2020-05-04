@@ -3,7 +3,7 @@ open JsonFS.Combinator
 
 [<EntryPoint>]
 let main argv =
-    let stream = Stream("-123a")
-    let p = opt (specificChar '-') .>>. digit
-    printfn "%A" (p stream)
+    let stream = Stream("-123")
+    let p = (specificChar '+' <|> specificChar '-') >>. many1 digit
+    printfn "%A" (stream |> p)
     0

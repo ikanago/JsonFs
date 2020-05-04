@@ -50,7 +50,7 @@ module Combinator =
             | Failure _ -> q stream
 
     // First, apply the parser `p`.
-    // If `p` succeeds, then apply f to the result of `p` and 
+    // If `p` succeeds, then apply f to the result of `p` and
     // return it as `ParseResult<'a>`.
     let (|>>) (p: Parser<'a>) f =
         fun (stream: Stream) ->
@@ -59,17 +59,25 @@ module Combinator =
             | Failure failure -> Failure failure
             | Success value -> Success(f value)
 
-    let (<*>) (fP: Parser<'a -> 'b>) (xP: Parser<'a>) : Parser<'b> = (fP .>>. xP) |>> (fun (f, x) -> f x)
+    // Apply parsers `p` and `q` in sequence and throw away the result of `q`.
+    let (.>>) (p: Parser<'a>) (q: Parser<'b>) =
+        (p .>>. q) |>> (fun (a, _) -> a)
+
+    // Apply parsers `p` and `q` in sequence and throw away the result of `p`.
+    let (>>.) (p: Parser<'a>) (q: Parser<'b>) =
+        (p .>>. q) |>> (fun (_, b) -> b)
+
+    let (<*>) (fP: Parser<'a -> 'b>) (xP: Parser<'a>): Parser<'b> = (fP .>>. xP) |>> (fun (f, x) -> f x)
 
     let lift2 f xP yP = (returnP f <*> xP <*> yP)
 
     // Apply parsers in `pList`.
-    let rec sequence (pList: Parser<'a>list) =
-        let cons (head: 'a) (tail: 'a list) = head::tail
+    let rec sequence (pList: Parser<'a> list) =
+        let cons (head: 'a) (tail: 'a list) = head :: tail
         let consP = lift2 cons
         match pList with
         | [] -> returnP []
-        | headP::tailP -> consP headP (sequence tailP)
+        | headP :: tailP -> consP headP (sequence tailP)
 
     // Parse greedy as long as possible.
     let many (p: Parser<'a>) =
@@ -77,17 +85,15 @@ module Combinator =
             let firstResult = p stream
             match firstResult with
             | Failure _ -> []
-            | Success value -> value::(innerMany stream)
+            | Success value -> value :: (innerMany stream)
+
         innerMany >> Success
 
     // Almost same as `many`, but at least 1 character must be parsed successfully.
     let many1 (p: Parser<'a>) =
         fun (stream: Stream) ->
             let attempt = (many p) stream
-            if attempt = Success [] then
-                Failure "Unexpected Token"
-            else
-                attempt
+            if attempt = Success [] then Failure "Unexpected Token" else attempt
 
     // Try to match a parser zero or one time.
     let opt (p: Parser<'a>) =
