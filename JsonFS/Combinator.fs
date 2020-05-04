@@ -88,3 +88,9 @@ module Combinator =
                 Failure "Unexpected Token"
             else
                 attempt
+
+    // Try to match a parser zero or one time.
+    let opt (p: Parser<'a>) =
+        let some = p |>> Some
+        let none = returnP None
+        some <|> none
