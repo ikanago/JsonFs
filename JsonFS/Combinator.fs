@@ -38,17 +38,14 @@ module Combinator =
             | Success value -> Success(f value)
 
     // Apply parsers `p` and `q` in sequence and throw away the result of `q`.
-    let (.>>) (p: Parser<'a>) (q: Parser<'b>) =
-        (p .>>. q) |>> (fun (a, _) -> a)
+    let (.>>) (p: Parser<'a>) (q: Parser<'b>) = (p .>>. q) |>> (fun (a, _) -> a)
 
     // Apply parsers `p` and `q` in sequence and throw away the result of `p`.
-    let (>>.) (p: Parser<'a>) (q: Parser<'b>) =
-        (p .>>. q) |>> (fun (_, b) -> b)
+    let (>>.) (p: Parser<'a>) (q: Parser<'b>) = (p .>>. q) |>> (fun (_, b) -> b)
 
     // Used to parse something surrounded by specific string parsed by `popen` and `pclose`.
     // For example, "{abc}".
-    let between (popen: Parser<'a>) (pclose: Parser<'b>) (p: Parser<'c>) =
-        popen >>. p .>> pclose
+    let between (popen: Parser<'a>) (pclose: Parser<'b>) (p: Parser<'c>) = popen >>. p .>> pclose
 
     let (<*>) (fP: Parser<'a -> 'b>) (xP: Parser<'a>): Parser<'b> = (fP .>>. xP) |>> (fun (f, x) -> f x)
 
@@ -83,3 +80,11 @@ module Combinator =
         let some = p |>> Some
         let none = returnP None
         some <|> none
+
+    let sepBy1 (p: Parser<'a>) (sep: Parser<'b>) =
+        let sepThenP = sep >>. p
+        p
+        .>>. many1 sepThenP
+        |>> (fun (p, pList) -> p :: pList)
+
+    let sepBy (p: Parser<'a>) (sep: Parser<'b>) = sepBy1 p sep <|> returnP []

@@ -28,4 +28,5 @@ module CharParsers =
 
     let ws =
         let whitespaceCharacters = [ '\t'; '\n'; ' ' ]
-        fun (stream: Stream) -> many1 (satisfy (fun c -> List.exists (fun elem -> elem = c) whitespaceCharacters)) stream
+        fun (stream: Stream) ->
+            many (satisfy (fun c -> List.exists (fun elem -> elem = c) whitespaceCharacters)) stream

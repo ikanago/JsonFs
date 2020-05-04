@@ -4,7 +4,8 @@ open JsonFS.CharParsers
 
 [<EntryPoint>]
 let main argv =
-    let stream = Stream(" 123")
-    let p = ws >>. (many1 digit)
+    let stream = Stream(",")
+    let p = (specificChar ',') .>>. digit
     printfn "%A" (stream |> p)
+    printfn "%A" (stream.Peek())
     0

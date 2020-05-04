@@ -28,3 +28,9 @@ let digitTest () =
 let wsTest () =
     let ignoreWs = ws >>. specificChar 'a'
     Assert.AreEqual(Success 'a', " \t\n\n   a" |> Stream |> ignoreWs)
+
+[<Test>]
+let sepByTest () =
+    let numArray = between (specificChar '[') (specificChar ']') (sepBy1 digit (specificChar ',' .>>. ws))
+    Assert.AreEqual(Success(['1'; '2'; '3']), "[1, 2,3]" |> Stream |> numArray)
+    // Assert.AreEqual("Unexpected Token", "1,2,3" |> Stream |> (sepBy1 digit (specificChar ',') .>>. specificChar 'a') |> getExpectedException)
