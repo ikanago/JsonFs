@@ -45,6 +45,11 @@ module Combinator =
     let (>>.) (p: Parser<'a>) (q: Parser<'b>) =
         (p .>>. q) |>> (fun (_, b) -> b)
 
+    // Used to parse something surrounded by specific string parsed by `popen` and `pclose`.
+    // For example, "{abc}".
+    let between (popen: Parser<'a>) (pclose: Parser<'b>) (p: Parser<'c>) =
+        popen >>. p .>> pclose
+
     let (<*>) (fP: Parser<'a -> 'b>) (xP: Parser<'a>): Parser<'b> = (fP .>>. xP) |>> (fun (f, x) -> f x)
 
     let lift2 f xP yP = (returnP f <*> xP <*> yP)

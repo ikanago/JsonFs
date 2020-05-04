@@ -4,16 +4,7 @@ open NUnit.Framework
 open JsonFS.Parse
 open JsonFS.Combinator
 open JsonFS.CharParsers
-
-// Get a message of an exception in the `ParseResult`.
-// If `Success _` is passed, raise an exception.
-let getExpectedException (result: ParseResult<'T>) =
-    match result with
-    | Success result ->
-        printfn "%A" result
-        Assert.Fail()
-        ""
-    | Failure failure -> failure
+open Test.Combinator
 
 [<Test>]
 let anyCharTest () =

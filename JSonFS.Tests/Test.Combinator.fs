@@ -54,6 +54,12 @@ let andThenSelect () =
     Assert.AreEqual(Success ['1'; '2'; '3'], "-123" |> Stream |> signDigit)
 
 [<Test>]
+let betweenTest () =
+    let parens = between (specificChar '(') (specificChar ')') (many1 digit)
+    Assert.AreEqual(Success ['1'; '2'; '3'], "(123)" |> Stream |> parens)
+    Assert.AreEqual("EOF", "(123" |> Stream |> parens |> getExpectedException)
+
+[<Test>]
 let sequenceTest () =
     let stream = Stream "12a3b"
 
