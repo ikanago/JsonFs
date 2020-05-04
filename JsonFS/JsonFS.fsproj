@@ -7,6 +7,7 @@
   <ItemGroup>
     <Compile Include="Parse.fs" />
     <Compile Include="Combinator.fs" />
+    <Compile Include="CharParsers.fs" />
     <Compile Include="JsonValue.fs" />
   </ItemGroup>
 
