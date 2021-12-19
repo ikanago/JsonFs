@@ -1,27 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netcoreapp5.0</TargetFramework>
-
     <IsPackable>false</IsPackable>
     <GenerateProgramFile>false</GenerateProgramFile>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="nunit" Version="3.13.2" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.1.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
   </ItemGroup>
-
   <ItemGroup>
+    <Compile Include="Common.fs" />
     <Compile Include="Test.Parse.fs" />
+    <Compile Include="Test.Number.fs" />
     <Compile Include="Test.Combinator.fs" />
     <Compile Include="Test.CharParsers.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\JsonFS\JsonFS.fsproj" />
   </ItemGroup>
-
 </Project>

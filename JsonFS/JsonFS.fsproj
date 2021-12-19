@@ -9,6 +9,7 @@
     <Compile Include="Combinator.fs" />
     <Compile Include="CharParsers.fs" />
     <Compile Include="JsonValue.fs" />
+    <Compile Include="ParseJson.fs" />
   </ItemGroup>
 
 </Project>
