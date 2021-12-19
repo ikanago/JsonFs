@@ -28,5 +28,6 @@ module CharParsers =
 
     let ws =
         let whitespaceCharacters = [ '\t'; '\n'; ' ' ]
+        let isWhiteSpace = fun c -> List.exists (fun elem -> elem = c) whitespaceCharacters
         fun (stream: Stream) ->
-            many (satisfy (fun c -> List.exists (fun elem -> elem = c) whitespaceCharacters)) stream
+            many (satisfy isWhiteSpace) stream

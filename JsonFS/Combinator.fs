@@ -8,14 +8,11 @@ module Combinator =
     // If one of them fails, report the failure.
     let (.>>.) (p: Parser<'a>) (q: Parser<'b>) =
         fun (stream: Stream) ->
-            let pResult = p stream
-            match pResult with
-            | Failure failure -> Failure failure
-            | Success pValue ->
-                let qResult = q stream
-                match qResult with
-                | Failure failure -> Failure failure
-                | Success qValue -> Success(pValue, qValue)
+            result {
+                let! pResult = p stream
+                let! qResult = q stream
+                return (pResult, qResult)
+            }
 
     // First, apply the parser `p`.
     // If `p` succeeds, return the result of `p`.
@@ -32,10 +29,10 @@ module Combinator =
     // return it as `ParseResult<'a>`.
     let (|>>) (p: Parser<'a>) f =
         fun (stream: Stream) ->
-            let result = p stream
-            match result with
-            | Failure failure -> Failure failure
-            | Success value -> Success(f value)
+            result {
+                let! r = p stream
+                return f r
+            }
 
     // Apply parsers `p` and `q` in sequence and throw away the result of `q`.
     let (.>>) (p: Parser<'a>) (q: Parser<'b>) = (p .>>. q) |>> (fun (a, _) -> a)

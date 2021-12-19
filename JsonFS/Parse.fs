@@ -20,6 +20,17 @@ module Parse =
         | Success of 'T
         | Failure of string
 
+    type ParseResultBuilder() =
+        member this.Bind(x, f) =
+            match x with
+            | Success x -> f x
+            | Failure e -> Failure e
+
+        member this.Return(x) = Success x
+
+        member this.Delay(f) = f()
+
+    let result = ParseResultBuilder()
 
     type Parser<'a> = Stream -> ParseResult<'a>
 
