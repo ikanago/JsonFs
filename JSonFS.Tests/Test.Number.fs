@@ -6,10 +6,14 @@ open JsonFS.JsonValue
 open JsonFS.ParseJson
 open Test.Common
 
-let ParseIntegerData = 
+let ParseIntegerData =
     [
         "0", JNumber 0m
         "123", JNumber 123m
+        "123a456", JNumber 123m
+        "-123", JNumber -123m
+        "-123a456", JNumber -123m
+        "-0", JNumber 0m
     ] |> List.map(PrepareTestCaseData)
 
 [<TestCaseSource(nameof ParseIntegerData)>]

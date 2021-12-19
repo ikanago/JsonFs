@@ -7,6 +7,9 @@ open JsonFS.Combinator
 
 module ParseJson =
     let parseInteger = fun (stream: Stream) ->
-        match many digit stream with
+        match stream |> (opt (specificChar '-') |>> Option.toList) with
         | Failure _ -> Failure "Unexpected Token"
-        | Success digits -> digits |> System.String.Concat |> decimal |> JNumber |> Success
+        | Success minus ->
+            match many1 digit stream with
+                | Failure _ -> Failure "Unexpected Token"
+                | Success digits -> minus @ digits |> System.String.Concat |> decimal |> JNumber |> Success
