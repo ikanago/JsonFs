@@ -17,6 +17,7 @@
     <Compile Include="Test.Number.fs" />
     <Compile Include="Test.Array.fs" />
     <Compile Include="Test.Null.fs" />
+    <Compile Include="Test.String.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>

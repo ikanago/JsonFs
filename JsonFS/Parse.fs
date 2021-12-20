@@ -46,6 +46,8 @@ module Parse =
 
     let returnP x : Parser<'a> = fun (stream: Stream) -> Success (x, stream)
 
+    let ignoreP: Parser<unit> = returnP ()
+
     let consume =
         fun (stream: Stream) ->
             match stream.Skip() with
