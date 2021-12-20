@@ -12,3 +12,10 @@ module ParseJson =
             let! digits = some digit
             return minus @ digits |> System.String.Concat |> decimal |> JNumber
         }
+
+    let parseArray (s: Stream) =
+        let delimeter = (specificChar ',') .>>. ws
+        let parseInner = sepBy parseInteger delimeter
+        s |> (between (specificChar '[') (specificChar ']') parseInner |>> JArray)
+
+    let parseValue = parseInteger

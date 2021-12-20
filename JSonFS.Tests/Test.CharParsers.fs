@@ -4,7 +4,7 @@ open NUnit.Framework
 open JsonFS.Parse
 open JsonFS.Combinator
 open JsonFS.CharParsers
-open Test.Combinator
+open Test.Common
 
 [<Test>]
 let anyCharTest () =

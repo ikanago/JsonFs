@@ -12,9 +12,10 @@
   <ItemGroup>
     <Compile Include="Common.fs" />
     <Compile Include="Test.Parse.fs" />
-    <Compile Include="Test.Number.fs" />
     <Compile Include="Test.Combinator.fs" />
     <Compile Include="Test.CharParsers.fs" />
+    <Compile Include="Test.Number.fs" />
+    <Compile Include="Test.Array.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>

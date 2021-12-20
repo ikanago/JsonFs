@@ -2,8 +2,8 @@
 
 module JsonValue =
     type JsonValue =
-        | JObject of members: (string * JsonValue) []
-        | JArray of elements: JsonValue []
+        | JObject of members: list<(string * JsonValue)>
+        | JArray of elements: list<JsonValue>
         | JString of string
         | JNumber of decimal
         | JFloat of float
