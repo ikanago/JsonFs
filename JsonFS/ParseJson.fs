@@ -18,12 +18,16 @@ module ParseJson =
         let parseInner = sepBy parseInteger delimeter
         s |> (between (specificChar '[') (specificChar ']') parseInner |>> JArray)
 
+    let parseSymbol (symbol: string) =
+        let rec parseSymbolInner (symbol: list<char>)=
+            match symbol with
+            | [] -> returnP ()
+            | c::s -> specificChar c >>. parseSymbolInner s
+        parseSymbolInner (Seq.toList symbol)
+
     let parseNull =
         parser {
-            do! specificChar 'n' >>. ignoreP
-            do! specificChar 'u' >>. ignoreP
-            do! specificChar 'l' >>. ignoreP
-            do! specificChar 'l' >>. ignoreP
+            do! parseSymbol("null")
             return JNull
         }
 
