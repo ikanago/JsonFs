@@ -9,6 +9,7 @@ open Test.Common
 let ParseArrayData =
     [
         "[]", (JArray [], Stream "")
+        "[1]", (JArray [ JNumber 1m ], Stream "")
         "[1, 2, 3]", (JArray [ JNumber 1m; JNumber 2m; JNumber 3m ], Stream "")
         "[1, 2,3]", (JArray [ JNumber 1m; JNumber 2m; JNumber 3m ], Stream "")
     ] |> List.map(PrepareTestCaseData)
@@ -18,8 +19,8 @@ let ParseArray s = Stream s |> parseArray
 
 let ParseArrayFailData =
     [
-        "[1, 2 ]", "Unexpected Token"
-        "[1 , 2]", "Unexpected Token"
+        "[1, 2 ]", "Unexpected Token:  "
+        "[1 , 2]", "Unexpected Token:  "
     ] |> List.map(PrepareFailTestCaseData)
 
 [<TestCaseSource(nameof ParseArrayFailData)>]

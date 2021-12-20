@@ -24,7 +24,7 @@ module Parse =
             | Error e -> Error e
 
         member this.BackTo(pos: int) =
-            position <- max (position - pos) 0
+            position <- max pos 0
 
         member this.Inner() = stream.[(position)..]
 

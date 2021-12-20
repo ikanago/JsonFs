@@ -24,7 +24,8 @@ module CharParsers =
                 do! consume
                 return c
             else
-                return! fail "Unexpected Token"
+                let! x = lookAhead
+                return! fail $"Unexpected Token: {x}"
         }
 
     // Expect a specific character and read it.

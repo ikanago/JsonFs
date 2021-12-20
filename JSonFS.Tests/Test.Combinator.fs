@@ -14,26 +14,24 @@ let andThenTest () =
         specificChar 'a' .>>. specificChar 'b' .>>. digit
 
     Assert.AreEqual(Success((('a', 'b'), '1'), Stream "c"), stream |> p)
-    Assert.AreEqual("Unexpected Token", stream |> p |> getExpectedException)
+    Assert.AreEqual("Unexpected Token: c", stream |> p |> getExpectedException)
 
 [<Test>]
 let orElseTest () =
-    let stream = Stream "ab1c"
-
     let p =
         digit <|> specificChar 'a' <|> specificChar 'b'
 
-    Assert.AreEqual(Success ('a', Stream "b1c"), stream |> p)
-    Assert.AreEqual(Success ('b', Stream "1c"), stream |> p)
-    Assert.AreEqual(Success ('1', Stream "c"), stream |> p)
-    Assert.AreEqual("Unexpected Token", stream |> p |> getExpectedException)
+    Assert.AreEqual(Success ('a', Stream "b1c"), Stream "ab1c" |> p)
+    Assert.AreEqual(Success ('b', Stream "1c"), Stream "b1c" |> p)
+    Assert.AreEqual(Success ('1', Stream "c"), Stream "1c" |> p)
+    Assert.AreEqual("Unexpected Token: c", Stream "c" |> p |> getExpectedException)
 
 [<Test>]
 let fmapTest () =
     let stream = Stream "a1"
     let p = specificChar 'a' |>> System.Char.ToUpper
     Assert.AreEqual(Success ('A', Stream "1"), stream |> p)
-    Assert.AreEqual("Unexpected Token", stream |> p |> getExpectedException)
+    Assert.AreEqual("Unexpected Token: 1", stream |> p |> getExpectedException)
 
 [<Test>]
 let andThenSelect () =
@@ -59,7 +57,7 @@ let sequenceTest () =
     Assert.AreEqual(Success ([ '1'; '2'; 'a' ], Stream "3b"), stream |> p1)
 
     let p2 = sequence [ digit; specificChar 'a' ]
-    Assert.AreEqual("Unexpected Token", stream |> p2 |> getExpectedException)
+    Assert.AreEqual("Unexpected Token: b", stream |> p2 |> getExpectedException)
 
 [<Test>]
 let manyTest () =
@@ -69,9 +67,11 @@ let manyTest () =
     Assert.AreEqual(Success ([ 'a'; 'a'; 'a' ], Stream "b"), "aaab" |> Stream |> someA)
     Assert.AreEqual("Unexpected Token", "bbbb" |> Stream |> someA |> getExpectedException)
 
-// [<Test>]
-// let tryTest () =
-//     let digitOr
+[<Test>]
+let tryTest () =
+    let digitOrA = digit <|> specificChar 'A'
+    Assert.AreEqual(Success ('1', Stream "A"), Stream "1A" |> digitOrA)
+    Assert.AreEqual(Success ('A', Stream "A"), Stream "AA" |> digitOrA)
 
 [<Test>]
 let optTest () =

@@ -16,7 +16,7 @@ let ParseString s = Stream s |> parseString
 
 let ParseStringFailData =
     [
-        "abc123", "Unexpected Token"
+        "abc123", "Unexpected Token: a"
     ] |> List.map(PrepareFailTestCaseData)
 
 [<TestCaseSource(nameof ParseStringFailData)>]

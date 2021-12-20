@@ -17,13 +17,13 @@ let anyCharTest () =
 let specificCharTest () =
     let stream = Stream "ab"
     Assert.AreEqual(Success ('a', Stream "b"), stream |> specificChar 'a')
-    Assert.AreEqual("Unexpected Token", stream |> specificChar 'a' |> getExpectedException)
+    Assert.AreEqual("Unexpected Token: b", stream |> specificChar 'a' |> getExpectedException)
 
 [<Test>]
 let digitTest () =
     let stream = Stream "1a"
     Assert.AreEqual(Success ('1', Stream "a"), stream |> digit)
-    Assert.AreEqual("Unexpected Token", stream |> digit |> getExpectedException)
+    Assert.AreEqual("Unexpected Token: a", stream |> digit |> getExpectedException)
 
 [<Test>]
 let wsTest () =

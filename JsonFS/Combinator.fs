@@ -3,6 +3,15 @@ namespace JsonFS
 open JsonFS.Parse
 
 module Combinator =
+    let tryParse (p: Parser<'a>): Parser<'a> =
+        fun (stream: Stream) ->
+            let pos = stream.Position()
+            match p stream with
+            | Success (v, s) -> Success (v, s)
+            | Failure e ->
+                stream.BackTo(pos)
+                Failure e
+
     // Apply both parser `p` and `q`.
     // If both of them succeed, return results wrapped into tuple.
     // If one of them fails, report the failure.
@@ -18,7 +27,7 @@ module Combinator =
     // If `p` fails, apply the parser `q` and return the result of `q`.
     let (<|>) (p: Parser<'a>) (q: Parser<'a>): Parser<'a> =
         parser {
-            return! p
+            return! tryParse p
             return! q
         }
 
@@ -73,15 +82,6 @@ module Combinator =
             let attempt = (many p) stream
             if attempt = Success ([], stream) then Failure "Unexpected Token" else attempt
 
-    let tryParse (p: Parser<'a>): Parser<'a> =
-        fun (stream: Stream) ->
-            let pos = stream.Position()
-            match p stream with
-            | Success (v, s) -> Success (v, s)
-            | Failure e ->
-                stream.BackTo(pos)
-                Failure e
-
     // Try to match a parser zero or one time.
     let opt (p: Parser<'a>): Parser<option<'a>> =
         let some = p |>> Some
@@ -89,9 +89,10 @@ module Combinator =
         some <|> none
 
     let sepBy1 (p: Parser<'a>) (sep: Parser<'b>): Parser<list<'a>> =
-        let sepThenP = sep >>. p
-        p
-        .>>. some sepThenP
-        |>> (fun (p, pList) -> p :: pList)
+        parser {
+            let! x = p
+            let! xs = many (sep >>. p)
+            return (x::xs)
+        }
 
     let sepBy (p: Parser<'a>) (sep: Parser<'b>): Parser<list<'a>> = sepBy1 p sep <|> returnP []
