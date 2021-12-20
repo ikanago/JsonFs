@@ -9,6 +9,6 @@ module ParseJson =
     let parseInteger =
         parser {
             let! minus = opt (specificChar '-') |>> Option.toList
-            let! digits = many1 digit
+            let! digits = some digit
             return minus @ digits |> System.String.Concat |> decimal |> JNumber
         }

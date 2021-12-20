@@ -44,28 +44,6 @@ module Parse =
 
     type Parser<'a> = Stream -> ParseResult<'a>
 
-    type ParserBuilder() =
-        member this.Bind(p, f) =
-            fun (stream: Stream) ->
-                match p stream with
-                | Success (v, stream) -> f v stream
-                | Failure e -> Failure e
-
-        member this.Return(x) = fun (stream: Stream) -> Success (x, stream)
-
-        member this.ReturnFrom(x) = x
-
-        member this.Delay(f) = f()
-
-        member this.Zero() = fun (_: Stream) -> Failure ""
-
-        member this.Combine(p, q) = fun (stream: Stream) ->
-            match p stream with
-            | Success (v, stream) -> Success (v, stream)
-            | Failure _ -> q stream
-
-    let parser = ParserBuilder()
-
     let returnP x : Parser<'a> = fun (stream: Stream) -> Success (x, stream)
 
     let consume =
@@ -80,3 +58,25 @@ module Parse =
             Success ((), stream)
 
     let fail (msg: string) = fun (_: Stream) -> Failure msg
+
+    type ParserBuilder() =
+        member this.Bind(p, f) =
+            fun (stream: Stream) ->
+                match p stream with
+                | Success (v, stream) -> f v stream
+                | Failure e -> Failure e
+
+        member this.Return(x) = returnP x
+
+        member this.ReturnFrom(x) = x
+
+        member this.Delay(f) = f()
+
+        member this.Zero() = fun (_: Stream) -> Failure ""
+
+        member this.Combine(p, q) = fun (stream: Stream) ->
+            match p stream with
+            | Success (v, stream) -> Success (v, stream)
+            | Failure _ -> q stream
+
+    let parser = ParserBuilder()

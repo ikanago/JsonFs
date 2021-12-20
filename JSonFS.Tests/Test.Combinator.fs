@@ -46,8 +46,8 @@ let fmapTest () =
 
 [<Test>]
 let andThenSelect () =
-    let digitSemicolon = many1 digit .>> specificChar ';'
-    let signDigit = opt (specificChar '+' <|> specificChar '-') >>. many1 digit
+    let digitSemicolon = some digit .>> specificChar ';'
+    let signDigit = opt (specificChar '+' <|> specificChar '-') >>. some digit
     Assert.AreEqual(Success (['1'; '2'; '3'], Stream ""), "123;" |> Stream |> digitSemicolon)
     Assert.AreEqual(Success (['1'; '2'; '3'], Stream ";"), "123;" |> Stream |> signDigit)
     Assert.AreEqual(Success (['1'; '2'; '3'], Stream ""), "+123" |> Stream |> signDigit)
@@ -55,7 +55,7 @@ let andThenSelect () =
 
 [<Test>]
 let betweenTest () =
-    let parens = between (specificChar '(') (specificChar ')') (many1 digit)
+    let parens = between (specificChar '(') (specificChar ')') (some digit)
     Assert.AreEqual(Success (['1'; '2'; '3'], Stream ""), "(123)" |> Stream |> parens)
     Assert.AreEqual("EOF", "(123" |> Stream |> parens |> getExpectedException)
 
@@ -74,12 +74,18 @@ let sequenceTest () =
 let manyTest () =
     let manyA = many (specificChar 'a')
     Assert.AreEqual(Success ([ 'a'; 'a'; 'a' ], Stream "b"), "aaab" |> Stream |> manyA)
-    let many1A = many1 (specificChar 'a')
-    Assert.AreEqual(Success ([ 'a'; 'a'; 'a' ], Stream "b"), "aaab" |> Stream |> many1A)
-    Assert.AreEqual("Unexpected Token", "bbbb" |> Stream |> many1A |> getExpectedException)
+    let someA = some (specificChar 'a')
+    Assert.AreEqual(Success ([ 'a'; 'a'; 'a' ], Stream "b"), "aaab" |> Stream |> someA)
+    Assert.AreEqual("Unexpected Token", "bbbb" |> Stream |> someA |> getExpectedException)
 
 [<Test>]
 let optTest () =
-    let p = opt (specificChar '-') .>>. many1 digit
+    let p = opt (specificChar '-') .>>. some digit
     Assert.AreEqual(Success ((Some '-', [ '1'; '2'; '3' ]), Stream ""), "-123" |> Stream |> p)
     Assert.AreEqual(Success([ '1'; '2'; '3' ], Stream ""), "123" |> Stream |> (returnP snd <*> p))
+
+[<Test>]
+let sepByTest () =
+    let numArray = between (specificChar '[') (specificChar ']') (sepBy1 digit (specificChar ',' .>>. ws))
+    Assert.AreEqual(Success (['1'; '2'; '3'], Stream ""), "[1, 2,3]" |> Stream |> numArray)
+    Assert.AreEqual("EOF", "1,2,3" |> Stream |> (sepBy1 digit (specificChar ',') .>>. specificChar 'a') |> getExpectedException)
