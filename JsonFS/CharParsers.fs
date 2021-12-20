@@ -11,13 +11,19 @@ module CharParsers =
             | Ok c -> Success (c, stream)
             | Error _ -> Failure "EOF"
 
+    let lookAhead =
+        fun (stream: Stream) ->
+            match stream.Peek() with
+            | Ok c -> Success (c, stream)
+            | Error _ -> Failure "EOF"
+
     let satisfy pred =
         parser {
-            let! c = anyChar
+            let! c = lookAhead
             if pred c then
+                do! consume
                 return c
             else
-                do! backward
                 return! fail "Unexpected Token"
         }
 

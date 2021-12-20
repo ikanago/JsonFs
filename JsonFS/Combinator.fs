@@ -16,7 +16,7 @@ module Combinator =
     // First, apply the parser `p`.
     // If `p` succeeds, return the result of `p`.
     // If `p` fails, apply the parser `q` and return the result of `q`.
-    let (<|>) (p: Parser<'a>) (q: Parser<'a>) =
+    let (<|>) (p: Parser<'a>) (q: Parser<'a>): Parser<'a> =
         parser {
             return! p
             return! q
@@ -27,7 +27,7 @@ module Combinator =
     // First, apply the parser `p`.
     // If `p` succeeds, then apply f to the result of `p` and
     // return it as `ParseResult<'a>`.
-    let (|>>) (p: Parser<'a>) f =
+    let (|>>) (p: Parser<'a>) (f: 'a -> 'b): Parser<'b> =
         fun (stream: Stream) ->
             let result = p stream
             match result with
@@ -72,6 +72,15 @@ module Combinator =
         fun (stream: Stream) ->
             let attempt = (many p) stream
             if attempt = Success ([], stream) then Failure "Unexpected Token" else attempt
+
+    let tryParse (p: Parser<'a>): Parser<'a> =
+        fun (stream: Stream) ->
+            let pos = stream.Position()
+            match p stream with
+            | Success (v, s) -> Success (v, s)
+            | Failure e ->
+                stream.BackTo(pos)
+                Failure e
 
     // Try to match a parser zero or one time.
     let opt (p: Parser<'a>): Parser<option<'a>> =

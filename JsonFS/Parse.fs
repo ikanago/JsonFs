@@ -3,31 +3,30 @@ namespace JsonFS
 module Parse =
     type Stream(stream: string) as self =
         let stream = stream
-        let mutable position = 0
+        let mutable position: int = 0
 
         member private this.IsConsumable() = stream.Length > position
 
-        member this.Peek() = if self.IsConsumable() then Ok stream.[position] else Error "EOF"
+        member this.Position() = position
 
-        member this.Skip() =
-            match self.Peek() with
-            | Ok _ ->
-                position <- position + 1
-                Ok()
-            | Error e -> Error e
+        member this.Peek() = if self.IsConsumable() then Ok stream.[position] else Error "EOF"
 
         member this.Consume() =
             match this.Peek() with
-            | Ok c -> 
-                this.Skip() |> ignore
+            | Ok c ->
+                position <- position + 1
                 Ok c
             | e -> e
 
-        member this.Backward() =
-            if position <> 0 then
-                position <- position - 1
+        member this.Skip() =
+            match this.Consume() with
+            | Ok _ -> Ok ()
+            | Error e -> Error e
 
-        member this.Inner() = stream.[position..]
+        member this.BackTo(pos: int) =
+            position <- max (position - pos) 0
+
+        member this.Inner() = stream.[(position)..]
 
         override this.Equals other =
             match other with
@@ -53,11 +52,6 @@ module Parse =
             match stream.Skip() with
             | Ok _ -> Success ((), stream)
             | Error _ -> Failure "EOF"
-
-    let backward =
-        fun (stream: Stream) ->
-            stream.Backward()
-            Success ((), stream)
 
     let fail (msg: string) = fun (_: Stream) -> Failure msg
 

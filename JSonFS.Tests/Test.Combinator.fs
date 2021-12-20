@@ -69,6 +69,10 @@ let manyTest () =
     Assert.AreEqual(Success ([ 'a'; 'a'; 'a' ], Stream "b"), "aaab" |> Stream |> someA)
     Assert.AreEqual("Unexpected Token", "bbbb" |> Stream |> someA |> getExpectedException)
 
+// [<Test>]
+// let tryTest () =
+//     let digitOr
+
 [<Test>]
 let optTest () =
     let p = opt (specificChar '-') .>>. some digit

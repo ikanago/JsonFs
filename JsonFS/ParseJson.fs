@@ -19,7 +19,7 @@ module ParseJson =
         s |> (between (specificChar '[') (specificChar ']') parseInner |>> JArray)
 
     let parseSymbol (symbol: string) =
-        let rec parseSymbolInner (symbol: list<char>)=
+        let rec parseSymbolInner (symbol: list<char>) =
             match symbol with
             | [] -> returnP ()
             | c::s -> specificChar c >>. parseSymbolInner s
@@ -27,8 +27,14 @@ module ParseJson =
 
     let parseNull =
         parser {
-            do! parseSymbol("null")
+            do! parseSymbol "null"
             return JNull
+        }
+
+    let parseBoolean =
+        parser {
+            return! parseSymbol "true" >>. returnP (JBoolean true)
+            return! parseSymbol "false" >>. returnP (JBoolean false)
         }
 
     let parseString =
