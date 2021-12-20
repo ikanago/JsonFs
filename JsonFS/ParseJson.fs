@@ -6,9 +6,9 @@ open JsonFS.CharParsers
 open JsonFS.Combinator
 
 module ParseJson =
-    let parseInteger = fun (stream: Stream) ->
-        result {
-            let! minus = stream |> (opt (specificChar '-') |>> Option.toList)
-            let! digits = many1 digit stream
+    let parseInteger =
+        parser {
+            let! minus = opt (specificChar '-') |>> Option.toList
+            let! digits = many1 digit
             return minus @ digits |> System.String.Concat |> decimal |> JNumber
         }

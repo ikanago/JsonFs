@@ -7,12 +7,11 @@ module Combinator =
     // If both of them succeed, return results wrapped into tuple.
     // If one of them fails, report the failure.
     let (.>>.) (p: Parser<'a>) (q: Parser<'b>) =
-        fun (stream: Stream) ->
-            result {
-                let! pResult = p stream
-                let! qResult = q stream
-                return (pResult, qResult)
-            }
+        parser {
+            let! pResult = p
+            let! qResult = q
+            return (pResult, qResult)
+        }
 
     // First, apply the parser `p`.
     // If `p` succeeds, return the result of `p`.
@@ -29,10 +28,10 @@ module Combinator =
     // return it as `ParseResult<'a>`.
     let (|>>) (p: Parser<'a>) f =
         fun (stream: Stream) ->
-            result {
-                let! r = p stream
-                return f r
-            }
+            let result = p stream
+            match result with
+            | Failure failure -> Failure failure
+            | Success (v, stream) -> Success((f v, stream))
 
     // Apply parsers `p` and `q` in sequence and throw away the result of `q`.
     let (.>>) (p: Parser<'a>) (q: Parser<'b>) = (p .>>. q) |>> (fun (a, _) -> a)
@@ -59,10 +58,11 @@ module Combinator =
     // Parse greedy as long as possible.
     let many (p: Parser<'a>) =
         let rec innerMany (stream: Stream) =
-            let firstResult = p stream
-            match firstResult with
-            | Failure _ -> []
-            | Success value -> value :: (innerMany stream)
+            match p stream with
+            | Failure _ -> ([], stream)
+            | Success (v, stream) ->
+                let (rest, stream) = innerMany stream
+                (v :: rest, stream)
 
         innerMany >> Success
 
@@ -70,7 +70,7 @@ module Combinator =
     let many1 (p: Parser<'a>) =
         fun (stream: Stream) ->
             let attempt = (many p) stream
-            if attempt = Success [] then Failure "Unexpected Token" else attempt
+            if attempt = Success ([], stream) then Failure "Unexpected Token" else attempt
 
     // Try to match a parser zero or one time.
     let opt (p: Parser<'a>) =

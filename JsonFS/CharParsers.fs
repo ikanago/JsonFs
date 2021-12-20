@@ -4,20 +4,22 @@ open JsonFS.Parse
 open JsonFS.Combinator
 
 module CharParsers =
-    let satisfy f =
-        fun (stream: Stream) ->
-            match stream.Peek() with
-            | Ok c ->
-                if f c then
-                    stream.Skip() |> ignore
-                    Success c
-                else
-                    Failure "Unexpected Token"
-            | Error e -> Failure "EOF"
-
     // Read an any kind of character.
     let anyChar =
-        fun (stream: Stream) -> satisfy (fun _ -> true) stream
+        fun (stream: Stream) ->
+            match stream.Consume() with
+            | Ok c -> Success (c, stream)
+            | Error _ -> Failure "EOF"
+
+    let satisfy pred =
+        parser {
+            let! c = anyChar
+            if pred c then
+                return c
+            else
+                do! backward
+                return! fail "Unexpected Token"
+        }
 
     // Expect a specific character and read it.
     let specificChar (c: char) =
