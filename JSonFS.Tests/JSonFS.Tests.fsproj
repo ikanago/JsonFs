@@ -16,6 +16,7 @@
     <Compile Include="Test.CharParsers.fs" />
     <Compile Include="Test.Number.fs" />
     <Compile Include="Test.Array.fs" />
+    <Compile Include="Test.Null.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
