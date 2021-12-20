@@ -7,10 +7,11 @@ open JsonFS.Combinator
 
 module ParseJson =
     let parseInteger =
+        let minus = (opt (specificChar '-') |>> Option.toList)
+        let digits = some digit
         parser {
-            let! minus = opt (specificChar '-') |>> Option.toList
-            let! digits = some digit
-            return minus @ digits |> System.String.Concat |> decimal |> JNumber
+            let! integer = minus <+> digits
+            return integer |> System.String.Concat |> decimal |> JNumber
         }
 
     let parseArray (s: Stream) =

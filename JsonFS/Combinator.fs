@@ -31,6 +31,16 @@ module Combinator =
             return! q
         }
 
+    // Monoid
+    // let zeroP: Parser<list<'a>> = returnP List.empty
+
+    let (<+>) (p: Parser<list<'a>>) (q: Parser<list<'a>>): Parser<list<'a>> =
+        parser {
+            let! pResult = p
+            let! qResult = q
+            return pResult @ qResult
+        }
+
     // Functor
     //
     // First, apply the parser `p`.
